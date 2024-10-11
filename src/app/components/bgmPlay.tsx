@@ -1,3 +1,4 @@
+"use client"
 import { Button } from '@/components/ui/button';
 import { Volume2, VolumeX } from 'lucide-react';
 import React, { useState, useRef, useEffect } from 'react';
@@ -21,7 +22,7 @@ const BgmPlayer: React.FC = () => {
         autoPlay
       />
       <Button 
-        className='absolute right-3 bg-[#252525]'
+        className='absolute right-3 top-5 bg-transparent z-50'
         onClick={() => setIsMuted(!isMuted)}>
         {isMuted ? <Volume2 /> : <VolumeX /> }
       </Button>

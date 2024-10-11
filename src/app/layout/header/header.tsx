@@ -69,9 +69,6 @@ const Header = () => {
           </div>
           <div className="flex gap-5">
             <div>
-              <BgmPlayer />
-            </div>
-            <div>
               <HowToPlaySection />
             </div>
             {user ? (
