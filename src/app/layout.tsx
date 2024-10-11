@@ -2,6 +2,7 @@ import "./globals.css";
 
 import type { Metadata } from "next";
 import { Kaisei_Decol } from "next/font/google";
+import BgmPlayer from "./components/bgmPlay";
 
 const Kaisei = Kaisei_Decol({
   weight: "400",
@@ -20,9 +21,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja" className="bg-[#252525]">
-        <body className={Kaisei.className}>
-          {children}
-        </body>
+      <body className={Kaisei.className}>
+        <BgmPlayer />
+        {children}
+      </body>
     </html>
   );
 }
