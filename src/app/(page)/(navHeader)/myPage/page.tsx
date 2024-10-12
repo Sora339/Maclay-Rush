@@ -115,12 +115,12 @@ const MyPage = () => {
                         </h1>
                       </div>
                       <hr />
-                      <div className="flex">
-                        <p className="text-3xl  text-white">仮置: </p>
+                      {/* <div className="flex"> 実績用
+                        <p className="text-3xl  text-white"></p>
                         <h1 className="text-3xl ml-auto text-white">
-                          30pxの実績用
+                          
                         </h1>
-                      </div>
+                        </div>*/}
                     </div>
                   </div>
                 </div>
