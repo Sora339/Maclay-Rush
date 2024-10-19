@@ -1,54 +1,14 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/lib/firebase/client";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { motion } from "framer-motion";
+
 import Loading from "@/app/components/loading";
-import { Crown, GalleryHorizontalEnd, LibraryBig, NotebookPen } from "lucide-react";
 
-type UserData = {
-  name: string;
-  photoURL: string;
-};
+import { auth } from "../../../../lib/auth";
+import Select from "@/app/components/myPage/Select";
 
-const MyPage = () => {
-  const [userData, setUserData] = useState<UserData | null>(null);
-  const [totalScore, setTotalScore] = useState<number | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const router = useRouter();
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        router.push("/auth");
-        setLoading(false);
-      } else {
-        fetchUserData(user.uid);
-      }
-    });
-
-    return () => unsubscribe();
-  }, [router]);
-
-  const fetchUserData = async (uid: string) => {
-    try {
-      const response = await fetch(`/api/user?uid=${uid}`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch user data");
-      }
-      const { userData, totalScore } = await response.json();
-      setUserData(userData);
-      setTotalScore(totalScore);
-    } catch (error) {
-      console.error("Error fetching user data: ", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+const  MyPage = async () => {
+  const session = await auth();
+  if (!session) return null;
 
   const getRank = (score: number | null): string => {
     if (score === null) return "新米司書";
@@ -70,11 +30,11 @@ const MyPage = () => {
 
   return (
     <div>
-      <Loading />
+      {/* <Loading /> */}
       <div className="bg-[url('../../public/image/bg-mypage.webp')] bg-cover bg-[rgba(0,0,0,0.60)] bg-blend-overlay bg-fixed z-0 relative">
         <div className="flex flex-col min-h-[calc(100vh-10rem)]">
           <div className="container mx-auto p-4 flex-grow items-center justify-center flex gap-20">
-            {userData ? (
+            {session.user ? (
               <div>
                 <div className="container items-center bg-[url('/image/gamecard.jpg')] rounded-md w-[424px] mx-auto h-[600px]">
                   <div className="p-4">
@@ -82,13 +42,13 @@ const MyPage = () => {
                     <div className="flex items-center justify-center mt-6 gap-10">
                       <Avatar className="size-20 ml-2">
                         <AvatarImage
-                          src={userData.photoURL}
+                          src={session.user.image as string}
                           className="size-20"
                         />
-                        <AvatarFallback>{userData.name}</AvatarFallback>
+                        <AvatarFallback>{session.user.name}</AvatarFallback>
                       </Avatar>
                       <div className="flex justify-center">
-                        <h1 className="text-3xl text-white">{userData.name}</h1>
+                        <h1 className="text-3xl text-white">{session.user.name}</h1>
                       </div>
                     </div>
                   </div>
@@ -99,28 +59,28 @@ const MyPage = () => {
                   </div>
                   <div className="h-40 w-[350px] mx-auto">
                     <div className="h-40 flex flex-col justify-between">
-                      <div className="flex">
+                      {/* <div className="flex">
                         <p className="text-3xl text-white">経験値: </p>
                         {totalScore !== null && (
                           <h1 className="text-3xl ml-auto text-white">
                             {totalScore}
                           </h1>
                         )}
-                      </div>
+                      </div> */}
                       <hr />
-                      <div className="flex">
+                      {/* <div className="flex">
                         <p className="text-3xl text-white">会員ランク: </p>
                         <h1 className="text-3xl ml-auto text-white">
                           {getRank(totalScore)}
                         </h1>
-                      </div>
+                      </div> */}
                       <hr />
-                      {/* <div className="flex"> 実績用
+                      <div className="flex"> 実績用
                         <p className="text-3xl  text-white"></p>
                         <h1 className="text-3xl ml-auto text-white">
                           
                         </h1>
-                        </div>*/}
+                        </div>
                     </div>
                   </div>
                 </div>
@@ -129,52 +89,7 @@ const MyPage = () => {
               <div>User data not found.</div>
             )}
             <div className="border-[1px] h-[70vh]"></div>
-            <div className="w-[52%] flex flex-col gap-4 text-right">
-              <motion.div
-                animate={{ x: [100, 0], opacity:1, transition: { type: "spring", duration: 0.5, delay:2 } }}
-                whileHover={{scale: 1.1}}
-                className="bg-[url('/image/select2.svg')] bg-contain bg-no-repeat w-[87%]"
-              >
-                <Link href="/game">
-                  <button className="h-max">
-                    <p className="text-5xl p-10 text-white flex items-center gap-4">貸出業務<NotebookPen className="text-5xl size-11"/></p>
-                  </button>
-                </Link>
-              </motion.div>
-              <motion.div
-                animate={{ x: [-100, 0], opacity:1, transition: { type: "spring", duration: 0.5, delay:2 } }}
-                whileHover={{scale: 1.1}}
-                className="bg-[url('/image/select3.svg')] bg-contain bg-no-repeat w-[87%] ml-auto"
-              >
-                <Link href="/mylikes">
-                  <button className="h-max">
-                    <p className="text-5xl p-10 text-white flex items-center gap-4">My本棚<LibraryBig className="text-5xl size-11"/></p>
-                  </button>
-                </Link>
-              </motion.div>
-              <motion.div
-                animate={{ x: [100, 0], opacity:1, transition: { type: "spring", duration: 0.5, delay:2 } }}
-                whileHover={{scale: 1.1}}
-                className="bg-[url('/image/select4.svg')] bg-contain bg-no-repeat w-[87%]"
-              >
-                <Link href="/gallery">
-                  <button className="h-max">
-                    <p className="text-5xl p-10 text-white flex items-center gap-4">ギャラリー<GalleryHorizontalEnd className="text-5xl size-11"/></p>
-                  </button>
-                </Link>
-              </motion.div>
-              <motion.div
-                animate={{ x: [-100, 0], opacity:1, transition: { type: "spring", duration: 0.5, delay:2 } }}
-                whileHover={{scale: 1.1}}
-                className="bg-[url('/image/select5.svg')] bg-contain bg-no-repeat w-[87%] ml-auto"
-              >
-                <Link href="/rankingPage">
-                  <button className="h-max">
-                    <p className="text-5xl p-10 text-white flex items-center gap-4">ランキング<Crown className="text-5xl size-11"/></p>
-                  </button>
-                </Link>
-              </motion.div>
-            </div>
+              <Select />
           </div>
         </div>
       </div>

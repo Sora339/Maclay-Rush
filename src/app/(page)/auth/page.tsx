@@ -1,33 +1,8 @@
-"use client";
 import LoginButton from "@/app/layout/header/LoginButton";
-import { useEffect, useState } from "react";
-import { onAuthStateChanged, User } from "firebase/auth";
-import { auth } from "@/lib/firebase/client";
-import { useRouter } from "next/navigation";
 import Footer from "@/app/layout/footer/footer";
 import AuthHeader from "./header";
 
 const Login = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const router = useRouter();
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      if (firebaseUser) {
-        setUser(firebaseUser);
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    if (user) {
-      // userがセットされたタイミングでリダイレクト
-      router.push("/myPage");
-    }
-  }, [user, router]);
-
   return (
     <div className="bg-[url('../../public/image/bg-top.webp')] bg-cover bg-[rgba(0,0,0,0.60)] bg-blend-overlay h-[100vh]">
       <div

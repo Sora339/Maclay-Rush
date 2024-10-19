@@ -1,24 +1,7 @@
-"use client";
 
-import { useEffect, useState } from "react";
-import { onAuthStateChanged, User } from "firebase/auth";
-import { auth } from "@/lib/firebase/client";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function Home() {
-  const [user, setUser] = useState<User | null>(null);
-  const router = useRouter();
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUser(user);
-        router.push("/myPage"); // Redirect to myPage.tsx if the user is logged in
-      }
-    });
-    return () => unsubscribe();
-  }, [router]);
 
   return (
     <div
