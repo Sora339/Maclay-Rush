@@ -1,10 +1,5 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
-import { onAuthStateChanged, User } from "firebase/auth";
-import { auth } from "@/lib/firebase/client";
-import { useEffect, useState } from "react";
 import LoginButton from "./LoginButton";
 import LogOutButton from "./logOutButton";
 import StartButton from "@/app/components/top/startButton";
@@ -12,25 +7,16 @@ import { Kaisei_Decol } from "next/font/google";
 import { Crown, GalleryHorizontalEnd, LibraryBig } from "lucide-react";
 import BgmPlayer from "@/app/components/bgmPlay";
 import HowToPlaySection from "@/app/components/top/howToPlay/howToSection";
+import { auth } from "../../../lib/auth";
 
 const Kaisei = Kaisei_Decol({
   weight: "400",
   subsets: ["latin"],
 });
 
-const Header = () => {
-  const [user, setUser] = useState<User | null>(null);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUser(user);
-      } else {
-        setUser(null);
-      }
-    });
-    return () => unsubscribe();
-  }, []);
+const Header = async () => {
+  const session = await auth();
+  if (!session) return null;
   return (
     <div className={Kaisei.className}>
       <header className="bg-[#252525] h-[80px]">
@@ -69,9 +55,9 @@ const Header = () => {
           </div>
           <div className="flex gap-5">
             <div>
-              <HowToPlaySection />
+              {/* <HowToPlaySection /> */}
             </div>
-            {user ? (
+            {session.user ? (
               <div>
                 <LogOutButton />
               </div>

@@ -1,10 +1,8 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { db, auth } from "../../lib/firebase/client";
-import { collection, addDoc } from "firebase/firestore";
-import { Book } from "@/../src/types/game"; // 共通の型をインポート
-import { onAuthStateChanged, User } from "firebase/auth";
+import { Book } from "@/../src/types/game"; // 共通の型をインポート;
+import { fetchBooks } from "../api/fetchBooks";
 
 const useBooks = () => {
   const [books, setBooks] = useState<Book[]>([]);
@@ -16,7 +14,6 @@ const useBooks = () => {
   const [requestedBook, setRequestedBook] = useState<Book | null>(null);
   const [returnNotifications, setReturnNotifications] = useState<string[]>([]);
   const [message, setMessage] = useState<string | null>(null); // メッセージ表示用の状態
-  const [user, setUser] = useState<User | null>(null); // ログインしているユーザーの情報を保持
   const [subject, setSubject] = useState<string>(""); // subjectを保持する状態
   const [isModalOpen, setIsModalOpen] = useState<boolean>(true); // モーダルの表示制御
   const [errorMessage, setErrorMessage] = useState<string | null>(null); // エラーメッセージ
@@ -24,70 +21,30 @@ const useBooks = () => {
 
   const returnTimersRef = useRef<NodeJS.Timeout[]>([]); // 返却タイマーを管理するRef
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUser(user);
-      } else {
-        setUser(null);
-      }
-    });
-    return () => unsubscribe();
-  }, []);
-
-  const fetchBooks = async (subject: string) => {
-    let allBooks: Book[] = [];
-    const titleSet = new Set<string>();
-    let attempts = 0;
-
-    while (allBooks.length < 8 && attempts < 3) {
-      const randomStartIndex = Math.floor(Math.random() * 100);
-      console.log(randomStartIndex);
-      try {
-        const response = await fetch(
-          `https://www.googleapis.com/books/v1/volumes?q=subject:${subject}&maxResults=8&startIndex=${randomStartIndex}&orderBy=newest&langRestrict=ja`
-        );
-        const data = await response.json();
-
-        const uniqueBooks = (data.items || []).filter((book: Book) => {
-          const title = book.volumeInfo.title;
-          if (!titleSet.has(title)) {
-            titleSet.add(title);
-            return true;
-          }
-          return false;
-        });
-
-        allBooks = [...allBooks, ...uniqueBooks];
-        allBooks = allBooks.slice(0, 8); // 必要な8冊だけ残す
-      } catch (error) {
-        console.error("Error fetching books:", error);
-      }
-      attempts++;
-    }
-
-    if (allBooks.length < 8) {
-      setErrorMessage("十分な本を取得できませんでした。もう一度試してください。");
-      setIsModalOpen(true); // モーダルウィンドウを再表示
-      setIsBooksReady(false); // 本が揃わなかった場合はタイマーを動かさない
-    } else {
-      setBooks(allBooks);
-      setRandomRequestedBook(allBooks);
-      setUsers(1); // ゲームが開始されたときに最初のユーザーをセット
-      setErrorMessage(null); // エラーメッセージをリセット
-      setIsBooksReady(true); // 8冊揃ったら状態を更新
-    }
-  };
-
-  const handleStartGame = () => {
+  const handleStartGame = async () => {
     setIsModalOpen(false);
-    setIsBooksReady(false); // 新しいゲームの開始時にタイマーをリセット
-    fetchBooks(subject).catch((error) => {
+    setIsBooksReady(false);
+
+    try {
+      const allBooks = await fetchBooks(subject);
+
+      if (allBooks.length < 8) {
+        setErrorMessage("十分な本を取得できませんでした。もう一度試してください。");
+        setIsModalOpen(true);
+        setIsBooksReady(false);
+      } else {
+        setBooks(allBooks);
+        setRandomRequestedBook(allBooks);
+        setUsers(1);
+        setErrorMessage(null);
+        setIsBooksReady(true);
+      }
+    } catch (error) {
       console.error("Error fetching books:", error);
       setBooks([]);
       setErrorMessage("エラーが発生しました。もう一度試してください。");
-      setIsModalOpen(true); // エラー時にモーダルを再表示
-    });
+      setIsModalOpen(true);
+    }
   };
 
   const setRandomRequestedBook = (books: Book[]) => {
@@ -180,24 +137,6 @@ const useBooks = () => {
     }, 3000); // 3秒後にメッセージを消す
   };
 
-  const saveResultToFirestore = async (score: number) => {
-    if (!user) {
-      console.error("No user is logged in.");
-      return;
-    }
-
-    try {
-      await addDoc(collection(db, "gameResults"), {
-        score,
-        userId: user.uid,
-        userName: user.displayName || "Anonymous",
-        timestamp: new Date(),
-      });
-    } catch (e) {
-      console.error("Error adding document: ", e);
-    }
-  };
-
   const resetGame = () => {
     clearAllTimers(); // すべてのタイマーをクリア
     setPoints(0); // ポイントをリセット
@@ -223,7 +162,6 @@ const useBooks = () => {
     message, // メッセージを返す
     handleLendBook,
     handleCheckBorrowed, // handleCheckBorrowedを返す
-    saveResultToFirestore,
     resetGame, // リセット関数を返す
     clearBorrowedBooks, // 貸出中の本をリセットする関数を返す
     isModalOpen, // モーダルの表示制御用

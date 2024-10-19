@@ -1,50 +1,83 @@
-// schema.prisma
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgres"
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id       Int        @id @default(autoincrement())
-  name     String
-  email    String     @unique
-  photoURL String?
-  public   Boolean
-  gameResults GameResult[]
-  userBooks  UserBook[]
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
 }
 
-model GameResult {
-  id        Int     @id @default(autoincrement())
-  userId    Int
-  timestamp DateTime
-  score     Int
-
-  user      User     @relation(fields: [userId], references: [id])
-}
-
-model UserBook {
-  id        Int     @id @default(autoincrement())
-  userId    Int
-  bookId    Int
-  content   String
-  timestamp DateTime
-
-  user      User     @relation(fields: [userId], references: [id])
-  book      Book     @relation(fields: [bookId], references: [id])
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Book {
-  id           Int      @id @default(autoincrement())
-  thumbnailURL String?
+  id           Int        @id @default(autoincrement())
+  thumbnailURL String
   saleability  Boolean
-  buyLink      String?
-  description  String?
+  buyLink      String
+  description  String
+  userBook     userBook[]
+}
 
-  userBooks    UserBook[]
+model gameResult {
+  id        Int      @id @default(autoincrement())
+  userid    String
+  timestamp DateTime @db.Date
+  score     Int
+  user      User     @relation(fields: [userid], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String       @id @default(cuid())
+  name          String?
+  email         String?      @unique
+  emailVerified DateTime?
+  image         String?
+  public        Boolean      @default(false)
+  accounts      Account[]
+  sessions      Session[]
+  gameResult    gameResult[]
+  userBook      userBook[]
+}
+
+model userBook {
+  id        Int      @id @default(autoincrement())
+  userid    String
+  bookid    Int
+  content   String
+  timestamo DateTime @db.Date
+  Book      Book     @relation(fields: [bookid], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userid], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
 }
