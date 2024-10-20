@@ -3,10 +3,11 @@
 import useBooks from "@/app/hooks/useBook";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { startTransition, useEffect, useState } from "react";
 import Bookshelf from "./Bookshelf";
 import SubSet from "./subSet";
 import Result from "./result";
+import { saveGameResult } from "@/app/actions/saveGame";
 
 interface PlayAreaProps {
   userId: string;
@@ -31,7 +32,7 @@ export default function PlayArea({ userId }: PlayAreaProps) {
     isBooksReady,
   } = useBooks();
 
-  const [timeLeft, setTimeLeft] = useState<number>(180);
+  const [timeLeft, setTimeLeft] = useState<number>(3);
   const [showResult, setShowResult] = useState<boolean>(false);
 
   useEffect(() => {
@@ -50,7 +51,14 @@ export default function PlayArea({ userId }: PlayAreaProps) {
 
   const handleGameEnd = () => {
     clearBorrowedBooks();
-    setShowResult(true);
+    startTransition(async () => {
+      const result = await saveGameResult({ userId, score: points });
+      if (!result.success) {
+        console.error("Error saving game result:", result.error);
+      }
+      setShowResult(true);
+    });
+    // setShowResult(true);
   };
 
   const handleCloseResult = () => {
@@ -58,7 +66,7 @@ export default function PlayArea({ userId }: PlayAreaProps) {
   };
 
   const handleResetGame = () => {
-    setTimeLeft(180);
+    setTimeLeft(3);
     setShowResult(false);
     resetGame();
   };
