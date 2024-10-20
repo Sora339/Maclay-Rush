@@ -35,7 +35,7 @@ model Session {
 }
 
 model Book {
-  id           Int        @id @default(autoincrement())
+  id           String        @id
   thumbnailURL String
   saleability  Boolean
   buyLink      String
@@ -67,7 +67,7 @@ model User {
 model userBook {
   id        Int      @id @default(autoincrement())
   userid    String
-  bookid    Int
+  bookid    String
   content   String
   timestamo DateTime @db.Date
   Book      Book     @relation(fields: [bookid], references: [id], onDelete: Cascade)

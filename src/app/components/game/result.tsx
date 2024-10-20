@@ -44,7 +44,16 @@ export default function Result({ score, books, userId, onReset }: ResultProps) {
                 <h2 className="text-xl font-semibold">
                   {book.volumeInfo.title}
                 </h2>
-                {/* <LikeButton /> */}
+                <LikeButton
+                  userId={userId}
+                  bookId={book.id}
+                  bookData={{
+                    thumbnailURL: book.volumeInfo.imageLinks?.smallThumbnail || '',
+                    saleability: book.saleInfo?.saleability === "FOR_SALE",
+                    buyLink: book.saleInfo?.buyLink || '',
+                    description: book.volumeInfo.description || '説明がありません。',
+                  }}
+                />
               </div>
               <div className="flex mt-2">
                 <div>
