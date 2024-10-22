@@ -35,7 +35,8 @@ model Session {
 }
 
 model Book {
-  id           String        @id
+  id           String     @id
+  title        String
   thumbnailURL String
   saleability  Boolean
   buyLink      String
@@ -69,7 +70,7 @@ model userBook {
   userid    String
   bookid    String
   content   String
-  timestamo DateTime @db.Date
+  timestamp DateTime @db.Date
   Book      Book     @relation(fields: [bookid], references: [id], onDelete: Cascade)
   user      User     @relation(fields: [userid], references: [id], onDelete: Cascade)
 }

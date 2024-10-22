@@ -16,6 +16,7 @@ export async function toggleFavorite(userId: string, bookId: string, bookData: a
       book = await prisma.book.create({
         data: {
           id: bookId,
+          title: bookData.title,
           thumbnailURL: bookData.thumbnailURL,
           saleability: bookData.saleability,
           buyLink: bookData.buyLink,
@@ -42,7 +43,7 @@ export async function toggleFavorite(userId: string, bookId: string, bookData: a
           userid: userId,
           bookid: bookId,
           content: 'お気に入り登録',
-          timestamo: new Date(),
+          timestamp: new Date(),
         },
       });
       return { liked: true };
