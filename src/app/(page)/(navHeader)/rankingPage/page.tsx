@@ -1,13 +1,6 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "../../../../../prisma/client";
 
-type GameResult = {
-  highScore: number | null;
-  userId: string;
-  userName: string;
-  score: number;
-};
-
 const Ranking = async () => {
   const session = await auth();
   if (!session) return null;
