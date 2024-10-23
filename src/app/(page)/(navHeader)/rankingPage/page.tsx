@@ -21,7 +21,7 @@ const Ranking = async () => {
     orderBy: {
       score: 'desc',
     },
-    take: 20,
+    take: 10,
     include: {
       user: {
         select: {
