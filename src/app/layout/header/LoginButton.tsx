@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { signIn } from "@/lib/auth";
 import Image from "next/image";
 
@@ -10,7 +9,7 @@ export default function LoginButton() {
         await signIn("google", { redirectTo: "/myPage" });
       }}
     >
-      <Button type="submit">
+      <button type="submit" className="w-fit">
         <Image
           src="image/login.svg"
           alt="google"
@@ -18,7 +17,7 @@ export default function LoginButton() {
           height={40}
           className="rounded-full"
         ></Image>
-      </Button>
+      </button>
     </form>
   );
 }

@@ -35,6 +35,7 @@ const Ranking = async () => {
     <div>
       <div
         className="bg-[url('../../public/image/bg-ranking.webp')] bg-cover bg-[rgba(0,0,0,0.60)] bg-blend-overlay bg-fixed"
+
       >
         <div className="flex flex-col min-h-[calc(100vh-10rem)]">
           <div className="container mx-auto p-4 flex-grow">

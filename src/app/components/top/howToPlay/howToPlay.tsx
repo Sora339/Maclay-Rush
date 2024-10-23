@@ -1,6 +1,9 @@
+"use client"
+
 import { useState } from 'react';
-import { animate, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
+import Image from 'next/image';
 
 const HowToPlay = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -11,7 +14,7 @@ const HowToPlay = () => {
         <div className='flex bg-[url("/image/startmenu.png")] h-[600px] w-[870px] bg-cover justify-center items-center'>
           <div className='mb-10'>
             <h2 className='text-center text-3xl'>1.業務を開始</h2>
-            <img className='w-[450px] mt-6' src="/image/exmypage.png" alt="" />
+            <Image className='w-[450px] mt-6' src="/image/exmypage.png" alt="" />
             <p className='mt-2 text-center'>
               あなたの仕事がここから始まります！！<br />
               まずはマイページのスタートボタンを押してみましょう！
@@ -26,7 +29,7 @@ const HowToPlay = () => {
         <div className='flex bg-[url("/image/startmenu.png")] h-[600px] w-[870px] bg-cover justify-center items-center'>
           <div className='mb-10'>
             <h2 className='text-center text-3xl'>2.トピックを選択</h2>
-            <img className='w-[450px] mt-6' src="/image/exselect.png" alt="" />
+            <Image className='w-[450px] mt-6' src="/image/exselect.png" alt="" />
             <p className='mt-2 text-center'>
               今日の業務を行うトピックをここで入力しよう<br />
               好きなジャンルの本棚で仕事しよう！
@@ -41,7 +44,7 @@ const HowToPlay = () => {
         <div className='flex bg-[url("/image/startmenu.png")] h-[600px] w-[870px] bg-cover justify-center items-center'>
           <div className='mb-10'>
             <h2 className='text-center text-3xl'>3.本の所在を判別</h2>
-            <img className='w-[450px] mt-6' src="/image/exgame.png" alt="" />
+            <Image className='w-[450px] mt-6' src="/image/exgame.png" alt="" />
             <p className='mt-2 text-center'>
               お客さんの要望の本が今あるかどうかを確認<br />
               あれば「貸出」、なければ「貸出中」を選択！
@@ -56,7 +59,7 @@ const HowToPlay = () => {
         <div className='flex bg-[url("/image/startmenu.png")] h-[600px] w-[870px] bg-cover justify-center items-center'>
           <div className='mb-10'>
             <h2 className='text-center text-3xl'>4.スコア発表</h2>
-            <img className='w-[450px] mt-6' src="/image/exresult.png" alt="" />
+            <Image className='w-[450px] mt-6' src="/image/exresult.png" alt="" />
             <p className='mt-2 text-center'>
               時間内に正しくこなせた業務に応じてスコアが出る<br />
               何度も挑戦してハイスコアを目指そう！
@@ -64,7 +67,7 @@ const HowToPlay = () => {
           </div>
         </div>
       ),
-    },// 他のスライドがある場合はここに追加
+    },
   ];
 
   const nextSlide = () => {

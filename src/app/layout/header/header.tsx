@@ -1,31 +1,26 @@
-import Image from "next/image";
 import Link from "next/link";
-import LoginButton from "./LoginButton";
 import LogOutButton from "./logOutButton";
 import StartButton from "@/app/components/top/startButton";
-import { Kaisei_Decol } from "next/font/google";
 import { Crown, GalleryHorizontalEnd, LibraryBig } from "lucide-react";
-import BgmPlayer from "@/app/components/bgmPlay";
 import HowToPlaySection from "@/app/components/top/howToPlay/howToSection";
 import { auth } from "../../../lib/auth";
+import { redirect } from "next/navigation";
 
-const Kaisei = Kaisei_Decol({
-  weight: "400",
-  subsets: ["latin"],
-});
 
 const Header = async () => {
   const session = await auth();
-  if (!session) return null;
+  if (!session) {
+    redirect("/")
+  };
   return (
-    <div className={Kaisei.className}>
+    <div>
       <header className="bg-[#252525] h-[80px]">
         <div
           className="container flex h-full max-w-[1200px] items-center justify-between"
           style={{ scrollbarGutter: "stable" }}
         >
           <div className="flex gap-20 items-center">
-            <Link href="/" className="flex">
+            <Link href="/myPage" className="flex">
               <h1 className="flex items-center text-white text-3xl font-bold">
                 Maclay Rush
               </h1>
@@ -55,7 +50,7 @@ const Header = async () => {
           </div>
           <div className="flex gap-5">
             <div>
-              {/* <HowToPlaySection /> */}
+              <HowToPlaySection />
             </div>
             {session.user ? (
               <div>

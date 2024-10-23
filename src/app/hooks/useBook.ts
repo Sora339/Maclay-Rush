@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { Book } from "@/../src/types/game"; // 共通の型をインポート;
 import { fetchBooks } from "../api/fetchBooks";
 
@@ -22,12 +22,18 @@ const useBooks = () => {
   const returnTimersRef = useRef<NodeJS.Timeout[]>([]); // 返却タイマーを管理するRef
 
   const handleStartGame = async () => {
-    setIsModalOpen(false);
+    if (!subject) {
+      setErrorMessage("トピックを入力してください。");
+      setIsModalOpen(true); // モーダルを再表示してエラーメッセージを表示
+      return;
+    }
+  
+    setIsModalOpen(false); // モーダルを閉じる
     setIsBooksReady(false);
-
+  
     try {
       const allBooks = await fetchBooks(subject);
-
+  
       if (allBooks.length < 8) {
         setErrorMessage("十分な本を取得できませんでした。もう一度試してください。");
         setIsModalOpen(true);
@@ -46,6 +52,18 @@ const useBooks = () => {
       setIsModalOpen(true);
     }
   };
+  
+  const resetGame = () => {
+    clearAllTimers(); // すべてのタイマーをクリア
+    setPoints(0); // ポイントをリセット
+    setUsers(0); // ユーザー数をリセット
+    setBorrowedBooks({}); // 貸出中の本をリセット
+    setReturnNotifications([]); // 返却通知をリセット
+    setSubject(""); // subjectもリセット
+    setRequestedBook(null); // リクエストされた本もリセット
+    setIsModalOpen(true); // モーダルを表示してトピック入力を促す
+  };
+  
 
   const setRandomRequestedBook = (books: Book[]) => {
     const randomBook = books[Math.floor(Math.random() * books.length)];
@@ -135,15 +153,6 @@ const useBooks = () => {
     setTimeout(() => {
       setMessage(null);
     }, 3000); // 3秒後にメッセージを消す
-  };
-
-  const resetGame = () => {
-    clearAllTimers(); // すべてのタイマーをクリア
-    setPoints(0); // ポイントをリセット
-    setUsers(0); // ユーザー数をリセット
-    setBorrowedBooks({}); // 貸出中の本をリセット
-    setReturnNotifications([]); // 返却通知をリセット
-    setIsModalOpen(true); // モーダルウィンドウを表示
   };
 
   const clearBorrowedBooks = () => {
