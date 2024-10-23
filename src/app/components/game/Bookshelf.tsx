@@ -22,7 +22,7 @@ const Bookshelf: React.FC<BookshelfProps> = ({ books, onLendBook, onCheckBorrowe
           key={book.id}
           id={book.id}
           title={book.volumeInfo.title}
-          isBorrowed={false} // ここは借用状態を反映するように設定する必要があります
+          isBorrowed={false}
           onLendBook={onLendBook}
           onCheckBorrowed={onCheckBorrowed}
         />

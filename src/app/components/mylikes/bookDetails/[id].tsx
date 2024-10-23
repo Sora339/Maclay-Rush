@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Book } from "@/../src/types/game";
-import Loading from "@/app/components/loading";
+import Loading from "@/app/loading";
 import Header from "@/app/layout/header/header";
 import Footer from "@/app/layout/footer/footer";
 

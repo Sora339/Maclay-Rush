@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-import Loading from "@/app/components/loading";
+import Loading from "@/app/loading";
 
 import { auth } from "../../../../lib/auth";
 import Select from "@/app/components/myPage/Select";

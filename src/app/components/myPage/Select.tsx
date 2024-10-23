@@ -9,7 +9,7 @@ export default function Select() {
         animate={{
           x: [100, 0],
           opacity: 1,
-          transition: { type: "spring", duration: 0.5, delay: 2 },
+          transition: { type: "spring", duration: 0.5 },
         }}
         whileHover={{ scale: 1.1 }}
         className="bg-[url('/image/select2.svg')] bg-contain bg-no-repeat w-[87%]"
@@ -27,7 +27,7 @@ export default function Select() {
         animate={{
           x: [-100, 0],
           opacity: 1,
-          transition: { type: "spring", duration: 0.5, delay: 2 },
+          transition: { type: "spring", duration: 0.5 },
         }}
         whileHover={{ scale: 1.1 }}
         className="bg-[url('/image/select3.svg')] bg-contain bg-no-repeat w-[87%] ml-auto"
@@ -45,7 +45,7 @@ export default function Select() {
         animate={{
           x: [100, 0],
           opacity: 1,
-          transition: { type: "spring", duration: 0.5, delay: 2 },
+          transition: { type: "spring", duration: 0.5 },
         }}
         whileHover={{ scale: 1.1 }}
         className="bg-[url('/image/select4.svg')] bg-contain bg-no-repeat w-[87%]"
@@ -63,7 +63,7 @@ export default function Select() {
         animate={{
           x: [-100, 0],
           opacity: 1,
-          transition: { type: "spring", duration: 0.5, delay: 2 },
+          transition: { type: "spring", duration: 0.5 },
         }}
         whileHover={{ scale: 1.1 }}
         className="bg-[url('/image/select5.svg')] bg-contain bg-no-repeat w-[87%] ml-auto"

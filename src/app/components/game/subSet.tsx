@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import React from "react";
-import Loading from "../loading";
+import Loading from "../../loading";
 
 interface SubSetProps {
   isModalOpen: boolean;
