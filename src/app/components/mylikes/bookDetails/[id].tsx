@@ -6,6 +6,7 @@ import { Book } from "@/../src/types/game";
 import Loading from "@/app/loading";
 import Header from "@/app/layout/header/header";
 import Footer from "@/app/layout/footer/footer";
+import Image from "next/image";
 
 const BookDetails = ({ params }: { params: { id: string } }) => {
   const [book, setBook] = useState<Book | null>(null);
@@ -61,10 +62,10 @@ const BookDetails = ({ params }: { params: { id: string } }) => {
         <h1 className="text-3xl font-semibold mb-4">{book.volumeInfo.title}</h1>
         <div className="flex justify-center mb-4">
           {imageUrl ? (
-            <img
+            <Image
               src={imageUrl}
               alt={book.volumeInfo.title}
-              className="rounded"
+              className="rounded" 
             />
           ) : (
             <p>画像が見つかりません。</p>

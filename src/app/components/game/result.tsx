@@ -1,4 +1,5 @@
 "use client";
+
 import { Book } from "@/../src/types/game"; // 共通の型をインポート
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
@@ -43,7 +44,9 @@ export default function Result({ score, books, userId, onReset }: ResultProps) {
           <h1 className="text-3xl font-bold mb-4">ゲーム結果</h1>
           <div className="flex gap-4">
             <Button
-              onClick={onReset}
+              onClick={() => {
+                onReset(); // リセット処理を実行
+              }}
               className="mt-4 bg-green-500 text-white mb-6 py-2 px-4 rounded"
             >
               やり直す

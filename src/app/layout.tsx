@@ -21,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja" className="bg-[#252525]">
-      <body className={Kaisei.className}>
+      <body className={Kaisei.className} >
         <BgmPlayer />
         {children}
       </body>

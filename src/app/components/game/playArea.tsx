@@ -1,9 +1,9 @@
 "use client";
 
+import { startTransition, useEffect, useState, useCallback } from "react";
 import useBooks from "@/app/hooks/useBook";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { startTransition, useEffect, useState } from "react";
 import Bookshelf from "./Bookshelf";
 import SubSet from "./subSet";
 import Result from "./result";
@@ -32,25 +32,14 @@ export default function PlayArea({ userId }: PlayAreaProps) {
     isBooksReady,
   } = useBooks();
 
-  const [timeLeft, setTimeLeft] = useState<number>(3);
+  const [timeLeft, setTimeLeft] = useState<number>(45);
   const [showResult, setShowResult] = useState<boolean>(false);
+  const [isGameActive, setIsGameActive] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (isBooksReady && timeLeft > 0) {
-      const timer = setInterval(() => {
-        setTimeLeft((prevTimeLeft) => prevTimeLeft - 1);
-      }, 1000);
-
-      return () => clearInterval(timer);
-    }
-
-    if (timeLeft === 0) {
-      handleGameEnd();
-    }
-  }, [timeLeft, isBooksReady]);
-
-  const handleGameEnd = () => {
+  const handleGameEnd = useCallback(() => {
     clearBorrowedBooks();
+    setIsGameActive(false);
+
     startTransition(async () => {
       const result = await saveGameResult({ userId, score: points });
       if (!result.success) {
@@ -58,17 +47,32 @@ export default function PlayArea({ userId }: PlayAreaProps) {
       }
       setShowResult(true);
     });
-    // setShowResult(true);
-  };
+  }, [clearBorrowedBooks, points, userId]);
 
-  const handleCloseResult = () => {
-    setShowResult(false);
-  };
+  useEffect(() => {
+    if (isGameActive && isBooksReady && timeLeft > 0) {
+      const timer = setInterval(() => {
+        setTimeLeft((prevTimeLeft) => prevTimeLeft - 1);
+      }, 1000);
+
+      return () => clearInterval(timer);
+    }
+
+    if (timeLeft === 0 && isGameActive) {
+      handleGameEnd();
+    }
+  }, [timeLeft, isBooksReady, isGameActive, handleGameEnd]);
 
   const handleResetGame = () => {
-    setTimeLeft(3);
+    setTimeLeft(45);
     setShowResult(false);
+    setIsGameActive(false);
     resetGame();
+  };
+
+  const startGame = () => {
+    setIsGameActive(true);
+    handleStartGame();
   };
 
   const formatTime = (seconds: number) => {
@@ -151,7 +155,7 @@ export default function PlayArea({ userId }: PlayAreaProps) {
         <SubSet
           isModalOpen={isModalOpen}
           setSubject={setSubject}
-          handleStartGame={handleStartGame}
+          handleStartGame={startGame}
           errorMessage={errorMessage}
         />
         {showResult && (
