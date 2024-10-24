@@ -9,7 +9,7 @@ const Loading = () => {
   return (
     <div className="fixed inset-0 bg-gray-900 text-white text-2xl z-10">
       <div className="flex items-center justify-center h-screen">
-        <Image className="mr-4" src="/image/stack-of-books.png" alt="" />
+        <Image className="mr-4" src="/image/stack-of-books.png" alt="" width={100} height={100}/>
         <motion.div
           className="flex"
           transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 1 }}

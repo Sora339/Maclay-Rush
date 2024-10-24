@@ -1,14 +1,25 @@
-import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
-import Loading from "@/app/loading";
-
 import { auth } from "../../../../lib/auth";
 import Select from "@/app/components/myPage/Select";
+import { prisma } from "../../../../../prisma/client";
 
 const  MyPage = async () => {
   const session = await auth();
   if (!session) return null;
+
+  const fetchTotalScore = async() => {
+    const result = await prisma.gameResult.aggregate({
+      where: {
+        userid: session.user?.id
+      },
+      _sum: {
+        score: true
+      }
+    })
+    return result._sum.score || 0;
+  }
+
+  const totalScore : number | null = await fetchTotalScore()
 
   const getRank = (score: number | null): string => {
     if (score === null) return "新米司書";
@@ -18,15 +29,6 @@ const  MyPage = async () => {
     if (score >= 500) return "若手司書";
     return "新米司書";
   };
-
-  // if (loading) {
-  //   return <div className="fixed inset-0 bg-gray-900 text-white text-2xl">
-  //           <div className="flex items-center justify-center h-screen">
-  //             <img className="mr-4" src="/image/stack-of-books.png" alt="" />
-  //             <p>Loading...</p>
-  //           </div>
-  //         </div>;
-  // }
 
   return (
     <div>
@@ -59,28 +61,27 @@ const  MyPage = async () => {
                   </div>
                   <div className="h-40 w-[350px] mx-auto">
                     <div className="h-40 flex flex-col justify-between">
-                      {/* <div className="flex">
+                      <div className="flex">
                         <p className="text-3xl text-white">経験値: </p>
                         {totalScore !== null && (
                           <h1 className="text-3xl ml-auto text-white">
                             {totalScore}
                           </h1>
                         )}
-                      </div> */}
+                      </div>
                       <hr />
-                      {/* <div className="flex">
-                        <p className="text-3xl text-white">会員ランク: </p>
+                      <div className="flex">
+                        <p className="text-3xl text-white">職位: </p>
                         <h1 className="text-3xl ml-auto text-white">
                           {getRank(totalScore)}
                         </h1>
-                      </div> */}
+                      </div>
                       <hr />
-                      <div className="flex"> 実績用
-                        <p className="text-3xl  text-white"></p>
+                      <div className="flex">
+                        <p className="text-3xl text-white">称号: </p>
                         <h1 className="text-3xl ml-auto text-white">
-                          
                         </h1>
-                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
