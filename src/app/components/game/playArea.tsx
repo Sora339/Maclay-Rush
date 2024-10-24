@@ -26,10 +26,10 @@ export default function PlayArea({ userId }: PlayAreaProps) {
     clearBorrowedBooks,
     message,
     isModalOpen,
+    isLoading,
     setSubject,
     handleStartGame,
     errorMessage,
-    isBooksReady,
   } = useBooks();
 
   const [timeLeft, setTimeLeft] = useState<number>(45);
@@ -49,8 +49,25 @@ export default function PlayArea({ userId }: PlayAreaProps) {
     });
   }, [clearBorrowedBooks, points, userId]);
 
+  const handleResetGame = () => {
+    setTimeLeft(45);
+    setShowResult(false);
+    setIsGameActive(false);
+    resetGame();
+  };
+
+  const startGame = useCallback(() => {
+    setIsGameActive(true); // ゲームを開始
+    setTimeLeft(45); // タイマーを初期化
+  }, []);
+
+  const handleStartGameAndBegin = async () => {
+    await handleStartGame(); // 本のフェッチ
+    startGame(); // フェッチ完了後にゲームを開始
+  };
+
   useEffect(() => {
-    if (isGameActive && isBooksReady && timeLeft > 0) {
+    if (isGameActive && timeLeft > 0) {
       const timer = setInterval(() => {
         setTimeLeft((prevTimeLeft) => prevTimeLeft - 1);
       }, 1000);
@@ -59,21 +76,9 @@ export default function PlayArea({ userId }: PlayAreaProps) {
     }
 
     if (timeLeft === 0 && isGameActive) {
-      handleGameEnd();
+      handleGameEnd(); // タイムアウトでゲームを終了
     }
-  }, [timeLeft, isBooksReady, isGameActive, handleGameEnd]);
-
-  const handleResetGame = () => {
-    setTimeLeft(45);
-    setShowResult(false);
-    setIsGameActive(false);
-    resetGame();
-  };
-
-  const startGame = () => {
-    setIsGameActive(true);
-    handleStartGame();
-  };
+  }, [timeLeft, isGameActive, handleGameEnd]);
 
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
@@ -154,8 +159,9 @@ export default function PlayArea({ userId }: PlayAreaProps) {
         </div>
         <SubSet
           isModalOpen={isModalOpen}
+          isLoading={isLoading} // ロード状態を反映
           setSubject={setSubject}
-          handleStartGame={startGame}
+          handleStartGame={handleStartGameAndBegin} // フェッチ完了後にゲームを開始
           errorMessage={errorMessage}
         />
         {showResult && (

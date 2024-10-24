@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import React from "react";
-import Loading from "../../loading";
 
 interface SubSetProps {
   isModalOpen: boolean;
+  isLoading: boolean;
   setSubject: (subject: string) => void;
   handleStartGame: () => void;
   errorMessage: string | null;
@@ -12,6 +12,7 @@ interface SubSetProps {
 
 const SubSet: React.FC<SubSetProps> = ({
   isModalOpen,
+  isLoading,
   setSubject,
   handleStartGame,
   errorMessage,
@@ -30,17 +31,17 @@ const SubSet: React.FC<SubSetProps> = ({
           className="w-full p-2 border border-gray-300 rounded mb-4"
         />
         <div className="flex justify-between items-center">
-        <Link href="/myPage">
+          <Link href="/myPage">
             <Button className="bg-green-500 text-white rounded">
               ゲーム終了
             </Button>
           </Link>
           <Button
-            
             onClick={handleStartGame}
             className="bg-blue-500 text-white rounded hover:bg-blue-600"
+            disabled={isLoading}
           >
-            決定
+            {isLoading ? "ロード中..." : "決定"}
           </Button>
         </div>
       </div>
