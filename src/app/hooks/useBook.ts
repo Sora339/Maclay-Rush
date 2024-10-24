@@ -11,6 +11,7 @@ const useBooks = () => {
   }>({});
   const [users, setUsers] = useState<number>(0);
   const [points, setPoints] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [requestedBook, setRequestedBook] = useState<Book | null>(null);
   const [returnNotifications, setReturnNotifications] = useState<string[]>([]);
   const [message, setMessage] = useState<string | null>(null); // メッセージ表示用の状態
@@ -24,34 +25,32 @@ const useBooks = () => {
   const handleStartGame = async () => {
     if (!subject) {
       setErrorMessage("トピックを入力してください。");
-      setIsModalOpen(true); // モーダルを再表示してエラーメッセージを表示
       return;
     }
   
-    setIsModalOpen(false); // モーダルを閉じる
-    setIsBooksReady(false);
-  
+    setIsLoading(true); // ロード開始
     try {
       const allBooks = await fetchBooks(subject);
   
       if (allBooks.length < 8) {
-        setErrorMessage("十分な本を取得できませんでした。もう一度試してください。");
-        setIsModalOpen(true);
-        setIsBooksReady(false);
+        setErrorMessage("十分な本を取得できませんでした。");
+        setIsModalOpen(true); // フェッチ失敗時はモーダルを再表示
       } else {
         setBooks(allBooks);
-        setRandomRequestedBook(allBooks);
-        setUsers(1);
+        setRandomRequestedBook(allBooks); // リクエストされた本を設定
         setErrorMessage(null);
-        setIsBooksReady(true);
+        setIsBooksReady(true); // 本の準備が完了したことを示す
+        setIsModalOpen(false); // フェッチ成功後にモーダルを閉じる
       }
     } catch (error) {
       console.error("Error fetching books:", error);
-      setBooks([]);
-      setErrorMessage("エラーが発生しました。もう一度試してください。");
-      setIsModalOpen(true);
+      setErrorMessage("エラーが発生しました。");
+    } finally {
+      setIsLoading(false); // ロード終了
     }
   };
+  
+  
   
   const resetGame = () => {
     clearAllTimers(); // すべてのタイマーをクリア
@@ -174,6 +173,7 @@ const useBooks = () => {
     resetGame, // リセット関数を返す
     clearBorrowedBooks, // 貸出中の本をリセットする関数を返す
     isModalOpen, // モーダルの表示制御用
+    isLoading,
     setSubject, // subjectを設定するための関数
     handleStartGame, // ゲーム開始の関数
     errorMessage, // エラーメッセージを返す
