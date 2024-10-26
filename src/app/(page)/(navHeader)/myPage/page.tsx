@@ -28,6 +28,7 @@ const  MyPage = async () => {
     if (score >= 1000) return "熟練司書";
     if (score >= 500) return "若手司書";
     return "新米司書";
+    
   };
 
   return (
