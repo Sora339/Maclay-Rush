@@ -41,6 +41,8 @@ model Book {
   saleability  Boolean
   buyLink      String
   description  String
+  previewLink  String
+  Review       Review[]
   userBook     userBook[]
 }
 
@@ -60,6 +62,7 @@ model User {
   image         String?
   public        Boolean      @default(false)
   accounts      Account[]
+  review        Review[]
   sessions      Session[]
   gameResult    gameResult[]
   userBook      userBook[]
@@ -67,12 +70,11 @@ model User {
 
 model userBook {
   id        Int      @id @default(autoincrement())
-  userid    String
-  bookid    String
-  content   String
+  userId    String
+  bookId    String
   timestamp DateTime @db.Date
-  Book      Book     @relation(fields: [bookid], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userid], references: [id], onDelete: Cascade)
+  book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
@@ -81,4 +83,14 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  bookId    String
+  createdAt DateTime @db.Date
+  content   String
+  book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

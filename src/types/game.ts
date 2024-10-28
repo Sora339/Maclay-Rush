@@ -6,6 +6,7 @@ export interface Book {
       imageLinks?: {
         smallThumbnail: string;
       };
+      previewLink: string;
     };
     saleInfo?: {
       saleability: string;

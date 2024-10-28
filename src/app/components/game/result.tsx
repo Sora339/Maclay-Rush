@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import LikeButton from "../likeButton";
+import { HiOutlineShoppingCart } from "react-icons/hi";
+import { IoMdSearch } from "react-icons/io";
 import { useEffect, useState } from "react";
 
 interface ResultProps {
@@ -38,8 +40,8 @@ export default function Result({ score, books, userId, onReset }: ResultProps) {
   if (loading) return <p>読み込み中...</p>;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-      <div className="bg-white p-6 rounded-lg shadow-lg max-w-3xl w-full">
+    <div className="fixed inset-0 bg-[#252525] bg-opacity-50 flex justify-center items-center">
+      <div className="bg-stone-600 text-white p-6 rounded-lg shadow-lg max-w-3xl w-full">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold mb-4">ゲーム結果</h1>
           <div className="flex gap-4">
@@ -67,9 +69,10 @@ export default function Result({ score, books, userId, onReset }: ResultProps) {
         <div className="max-h-[400px] overflow-y-auto">
           {books.map((book) => {
             const isFavorite = favoriteBooks.includes(book.id);
+            const preview = Boolean(book.volumeInfo.previewLink); // previewが存在するか確認
 
             return (
-              <div key={book.id} className="mb-4 p-4 border rounded">
+              <div key={book.id} className="mb-4 p-4 rounded">
                 <div className="flex justify-end">
                   <LikeButton
                     userId={userId}
@@ -82,6 +85,7 @@ export default function Result({ score, books, userId, onReset }: ResultProps) {
                       buyLink: book.saleInfo?.buyLink || "",
                       description:
                         book.volumeInfo.description || "説明がありません。",
+                      previewLink: book.volumeInfo.previewLink,
                     }}
                     isFavorite={isFavorite}
                   />
@@ -89,7 +93,7 @@ export default function Result({ score, books, userId, onReset }: ResultProps) {
                 <h2 className="text-xl font-semibold">
                   {book.volumeInfo.title}
                 </h2>
-                <div className="flex mt-2">
+                <div className="flex my-2">
                   {book.volumeInfo.imageLinks?.smallThumbnail && (
                     <div className="mb-2 mr-2 w-[200px] h-[300px]">
                       <Image
@@ -105,17 +109,33 @@ export default function Result({ score, books, userId, onReset }: ResultProps) {
                     {book.volumeInfo.description || "説明がありません。"}
                   </p>
                 </div>
-                <div className="w-full text-right">
-                  {book.saleInfo?.saleability === "FOR_SALE" &&
-                    book.saleInfo?.buyLink && (
-                      <a
-                        href={book.saleInfo.buyLink}
+                <div className="w-full flex gap-2 justify-end text-right">
+                  {preview && (
+                    <Button className="rounded bg-stone-700">
+                      <Link
+                        href={book.volumeInfo.previewLink}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-500"
+                        className="flex items-center gap-1"
                       >
-                        購入リンク
-                      </a>
+                        <IoMdSearch />
+                        プレビュー
+                      </Link>
+                    </Button>
+                  )}
+                  {book.saleInfo?.saleability === "FOR_SALE" &&
+                    book.saleInfo?.buyLink && (
+                      <Button className="rounded bg-stone-700">
+                        <Link
+                          href={book.saleInfo.buyLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1"
+                        >
+                          <HiOutlineShoppingCart />
+                          購入リンク
+                        </Link>
+                      </Button>
                     )}
                 </div>
               </div>

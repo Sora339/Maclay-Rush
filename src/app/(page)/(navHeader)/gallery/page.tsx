@@ -14,6 +14,7 @@ const Gallery = async () => {
         some: {}
       }
     },
+    take: 3, // 本の取得数を3冊に制限
   });
   
   return (
@@ -50,16 +51,16 @@ const GalleryCard = async ({
 }) => {
   const fetchUserBooks = await prisma.userBook.findMany({
     where: {
-      userid: userId
+      userId: userId
     },
     include: {
-      Book: true
+      book: true
     },
     take: 3,
   })
   return (
     <Link href={`/gallery/${userId}`}>
-      <div className="border p-4 rounded shadow-md cursor-pointer bg-white">
+       <div className="p-4 rounded shadow-md cursor-pointer bg-stone-600 text-white">
         <div className="flex items-center mb-4">
           <Image
             src={userPhotoURL}
@@ -75,8 +76,8 @@ const GalleryCard = async ({
             <div key={book.id} className="flex justify-center">
               {book && (
                 <Image
-                  src={book.Book.thumbnailURL}
-                  alt={book.Book.title}
+                  src={book.book.thumbnailURL}
+                  alt={book.book.title}
                   width={100}
                   height={150}
                   objectFit="cover"

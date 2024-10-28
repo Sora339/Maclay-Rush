@@ -20,6 +20,7 @@ export async function toggleFavorite(userId: string, bookId: string, bookData: a
           thumbnailURL: bookData.thumbnailURL,
           saleability: bookData.saleability,
           buyLink: bookData.buyLink,
+          previewLink: bookData.previewLink,
           description: bookData.description,
         },
       });
@@ -27,7 +28,7 @@ export async function toggleFavorite(userId: string, bookId: string, bookData: a
 
     // 3. 既にUserBookに登録されているか確認
     const existingFavorite = await prisma.userBook.findFirst({
-      where: { userid: userId, bookid: bookId },
+      where: { userId: userId, bookId: bookId },
     });
 
     if (existingFavorite) {
@@ -40,9 +41,8 @@ export async function toggleFavorite(userId: string, bookId: string, bookData: a
       // 5. UserBookに登録
       await prisma.userBook.create({
         data: {
-          userid: userId,
-          bookid: bookId,
-          content: 'お気に入り登録',
+          userId: userId,
+          bookId: bookId,
           timestamp: new Date(),
         },
       });
