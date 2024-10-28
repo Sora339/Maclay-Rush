@@ -3,6 +3,11 @@ import Image from "next/image";
 import { prisma } from "../../../../../prisma/client";
 import { auth } from "@/lib/auth";
 import PublishButton from "@/app/components/publishButton";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { HiOutlineShoppingCart } from "react-icons/hi";
+import ReviewButton from "@/app/components/mylikes/ReviewButton";
+import { IoMdSearch } from "react-icons/io";
 
 const MyLikes = async () => {
   const session = await auth();
@@ -10,12 +15,38 @@ const MyLikes = async () => {
 
   const likedBooks = await prisma.userBook.findMany({
     where: {
-      userid: session.user?.id,
+      userId: session.user?.id,
     },
     include: {
-      Book: true,
+      book: true,
     },
   });
+
+  // 各本のIDに関連するレビューを取得
+  const bookIds = likedBooks.map((book) => book.bookId);
+  const reviews = await prisma.review.findMany({
+    where: {
+      bookId: { in: bookIds },
+    },
+    include: {
+      user: true, // レビューを書いたユーザー情報を取得
+    },
+  });
+
+  // 型定義
+  type ReviewGroupedByBookId = {
+    [key: string]: (typeof reviews)[0][];
+  };
+
+  // 本ごとに関連するレビューをグループ化
+  const reviewsByBookId: ReviewGroupedByBookId = reviews.reduce(
+    (acc, review) => {
+      if (!acc[review.bookId]) acc[review.bookId] = [];
+      acc[review.bookId].push(review);
+      return acc;
+    },
+    {} as ReviewGroupedByBookId
+  );
 
   return (
     <div>
@@ -30,29 +61,30 @@ const MyLikes = async () => {
               {likedBooks.map((book) => (
                 <div
                   key={book.id}
-                  className="border p-2 rounded h-[400px] overflow-y-scroll bg-white"
+                  className="p-2 rounded h-[400px] overflow-y-scroll hidden-scrollbar bg-stone-600 text-white"
                 >
                   <div className="flex justify-end">
                     <LikeButton
                       userId={session.user?.id || ""}
-                      bookId={book.bookid}
+                      bookId={book.bookId}
                       bookData={{
-                        title: book.Book.title,
-                        thumbnailURL: book.Book.thumbnailURL || "",
-                        saleability: book.Book.saleability === true,
-                        buyLink: book.Book.buyLink || "",
+                        title: book.book.title,
+                        thumbnailURL: book.book.thumbnailURL || "",
+                        saleability: book.book.saleability === true,
+                        buyLink: book.book.buyLink || "",
+                        previewLink: book.book.previewLink,
                         description:
-                          book.Book.description || "説明がありません。",
+                          book.book.description || "説明がありません。",
                       }}
                       isFavorite={true} // 初期値として true を渡す
                     />
                   </div>
-                  <h2 className="text-xl font-semibold">{book.Book.title}</h2>
-                  {book.Book.thumbnailURL && (
+                  <h2 className="text-xl font-semibold">{book.book.title}</h2>
+                  {book.book.thumbnailURL && (
                     <div className="flex justify-center">
                       <Image
-                        src={book.Book.thumbnailURL}
-                        alt={book.Book.title}
+                        src={book.book.thumbnailURL}
+                        alt={book.book.title}
                         width={128}
                         height={200}
                         objectFit="cover"
@@ -61,20 +93,66 @@ const MyLikes = async () => {
                     </div>
                   )}
                   <p className="mb-2">
-                    {book.Book.description?.replace(/<wbr>/g, "")}
+                    {book.book.description?.replace(/<wbr>/g, "")}
                   </p>
-                  {book.Book.saleability === true && book.Book.buyLink && (
-                    <div className="text-right">
-                      <a
-                        href={book.Book.buyLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-500 ml-auto"
-                      >
-                        購入リンク
-                      </a>
-                    </div>
-                  )}
+                  <div className="gap-2 flex justify-end mb-2">
+                    {book.book.previewLink && (
+                      <Button className="rounded bg-stone-700">
+                        <Link
+                          href={book.book.previewLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1"
+                        >
+                          <IoMdSearch />
+                          プレビュー
+                        </Link>
+                      </Button>
+                    )}
+                    {book.book.saleability === true && book.book.buyLink && (
+                      <Button className="rounded bg-stone-700 mb-2">
+                        <Link
+                          href={book.book.buyLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-white flex items-center gap-1"
+                        >
+                          <HiOutlineShoppingCart />
+                          購入リンク
+                        </Link>
+                      </Button>
+                    )}
+                  </div>
+                  <hr />
+                  <div>
+                    <p className="font-semibold">レビュー</p>
+                    {reviewsByBookId[book.bookId]?.map((review) => (
+                      <div key={review.id} className="mt-2 pt-2">
+                        <div className="flex items-center mb-1">
+                          <Image
+                            src={review.user.image || "/default-avatar.png"}
+                            alt={review.user.name || "User"}
+                            width={32}
+                            height={32}
+                            className="rounded-full mr-2"
+                          />
+                          <p className="font-semibold">
+                            {review.user.name || "匿名ユーザー"}
+                          </p>
+                        </div>
+                        <p className="text-sm mb-2">{review.content}</p>
+                        <p className="text-xs text-gray-200">
+                          {new Date(review.createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="text-right">
+                    <ReviewButton
+                      bookId={book.bookId}
+                      userId={session.user?.id || ""}
+                    />
+                  </div>
                 </div>
               ))}
             </div>

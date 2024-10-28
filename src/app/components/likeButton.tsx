@@ -13,6 +13,7 @@ interface LikeButtonProps {
     saleability: boolean;
     buyLink: string;
     description: string;
+    previewLink: string;
   };
   isFavorite: boolean;
 }
@@ -53,7 +54,7 @@ export default function LikeButton({
           {liked ? (
             <IoHeartSharp className="text-red-500 text-2xl" />
           ) : (
-            <IoHeartOutline className="text-gray-500 text-2xl" />
+            <IoHeartOutline className="text-gray-300 text-2xl" />
           )}
         </button>
       </form>
