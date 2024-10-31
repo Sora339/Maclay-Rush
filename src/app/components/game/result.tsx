@@ -4,7 +4,7 @@ import { Book } from "@/../src/types/game"; // 共通の型をインポート
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
-import LikeButton from "../likeButton";
+import LikeButton from "../common/likeButton";
 import { HiOutlineShoppingCart } from "react-icons/hi";
 import { IoMdSearch } from "react-icons/io";
 import { useEffect, useState } from "react";

@@ -19,7 +19,6 @@ const BgmPlayer: React.FC = () => {
         ref={audioRef}
         src="/bgm/librarybgm.mp3"
         loop
-        autoPlay
       />
       <Button 
         className='absolute right-3 top-5 bg-transparent z-50'

@@ -2,7 +2,7 @@ import "./globals.css";
 
 import type { Metadata } from "next";
 import { Kaisei_Decol } from "next/font/google";
-import BgmPlayer from "./components/bgmPlay";
+import BgmPlayer from "./components/common/bgmPlay";
 
 const Kaisei = Kaisei_Decol({
   weight: "400",
