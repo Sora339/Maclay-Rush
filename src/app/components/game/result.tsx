@@ -23,7 +23,8 @@ export default function Result({ score, books, userId, onReset }: ResultProps) {
   useEffect(() => {
     const fetchFavoriteBooks = async () => {
       try {
-        const res = await fetch(`/api/favorites/${userId}`);
+        // 実際のエンドポイント名に修正
+        const res = await fetch(`/api/fetchLikes?userId=${userId}`);
         if (!res.ok) throw new Error("お気に入りの取得に失敗しました");
         const data = await res.json();
         setFavoriteBooks(data);
@@ -33,7 +34,7 @@ export default function Result({ score, books, userId, onReset }: ResultProps) {
         setLoading(false);
       }
     };
-
+  
     fetchFavoriteBooks();
   }, [userId]);
 
