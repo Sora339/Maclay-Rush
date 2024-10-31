@@ -13,4 +13,3 @@ export interface Book {
       buyLink?: string;
     };
   }
-  
