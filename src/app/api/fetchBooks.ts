@@ -1,5 +1,7 @@
-// app/api/fetchBooks.ts
 import { Book } from "@/../src/types/game"; // 共通型をインポート
+
+// 1秒待機する関数
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const fetchBooks = async (subject: string): Promise<Book[]> => {
   let allBooks: Book[] = [];
@@ -32,6 +34,7 @@ export const fetchBooks = async (subject: string): Promise<Book[]> => {
     }
 
     attempts++;
+    if (allBooks.length < 8) await delay(1000); // 次のリクエスト前に1秒待機
   }
 
   return allBooks;
