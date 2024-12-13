@@ -19,4 +19,5 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     clientSecret: process.env.AUTH_GOOGLE_SECRET ?? "",
   })],
   secret: process.env.AUTH_SECRET,
+  trustHost: process.env.NODE_ENV === "production" ? true : undefined,
 });
